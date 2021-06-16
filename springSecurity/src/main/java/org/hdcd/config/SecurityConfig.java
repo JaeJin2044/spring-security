@@ -1,19 +1,20 @@
 package org.hdcd.config;
 
 import org.hdcd.common.security.CustomAccessDeniedHandler;
+import org.hdcd.common.security.CustomLoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
 	
 	
 	@Override
@@ -48,7 +49,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		
 		//폼 기반 인증 기능을 사용한다.
-		http.formLogin();
+		//사용자가 정의한 로그인 페이지의 URI를 지정한다.
+		//로그인 성공후 처리를 담당하는 처리자로 지정한다.
+		http.formLogin()
+		.loginPage("/login")
+		.successHandler(authenticationSuccessHandler());
+		
+	
 	}
 
 	@Override
@@ -71,6 +78,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public AccessDeniedHandler accessDenied() {
 		return new CustomAccessDeniedHandler();
+	}
+	
+	@Bean
+	public AuthenticationSuccessHandler authenticationSuccessHandler() {
+		return new CustomLoginSuccessHandler();
 	}
 	
 	
